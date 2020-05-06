@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { Form, Button } from 'react-bootstrap';
 import './style.css';
+import {config} from '../config';
+import {tokenData} from './TokenData';
 
 export class Sending extends Component {
   state = { exchange: '', key: '', message: '' };
@@ -26,10 +28,11 @@ export class Sending extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch('http://localhost:52/messages', {
+    fetch(`${config}/messages`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${tokenData.currentTokensValue.AccessToken}`
         },
         body: {
           "exchange": this.state.exchange,
@@ -37,8 +40,11 @@ export class Sending extends Component {
           "message": this.state.message
         }
     })
-    .then(function (response) {
-        console.log(response);
+    .then((response) => {
+        if (response.status === 401 && tokenData.currentTokensValue.RefreshToken !== null) {
+          tokenData.refresh(tokenData.currentTokensValue.RefreshToken);
+          this.handleSubmit(event);
+        }
     })
     .catch(function (error) {
         console.log(error);
@@ -56,12 +62,12 @@ export class Sending extends Component {
 
           <Form.Group className="form-group row" controlId="formBasicKey">
             <Form.Label className="col-sm-2 col-form-label">Key</Form.Label>
-            <Form.Control  className="col-sm-5" type="text" placeholder="Key"  onChange={this.changeHandlerKey}/>
+            <Form.Control  className="col-sm-5" type="text" placeholder="Key" onChange={this.changeHandlerKey}/>
           </Form.Group>
 
           <Form.Group className="form-group row" controlId="formBasicMessage">
             <Form.Label className="col-sm-2 col-form-label">Message</Form.Label>
-            <Form.Control  className="col-sm-5" type="text" placeholder="Message"  onChange={this.changeHandlerMessage}/>
+            <Form.Control  className="col-sm-5" type="text" placeholder="Message" onChange={this.changeHandlerMessage}/>
           </Form.Group>
 
           <Button variant="primary" type="submit">
