@@ -4,7 +4,7 @@ import './style.css';
 import {userData} from './UserData';
 
 export class Register extends Component {
-  state = { username: '', password: '', };
+  state = { username: '', password: '' };
 
   constructor(props) {
     super(props);
@@ -41,7 +41,7 @@ export class Register extends Component {
               onChange={this.changeHandlerPassword}/>
           </Form.Group>
 
-          <Button variant="primary" type="submit">
+          <Button className="button" variant="primary" type="submit">
             Register
           </Button>
         </Form>

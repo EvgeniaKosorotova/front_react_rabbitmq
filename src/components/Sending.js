@@ -1,17 +1,19 @@
 import React, {Component} from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { Redirect } from "react-router-dom";
 import './style.css';
 import {config} from '../config';
-import {tokenData} from './TokenData';
+import data from './Data';
 
 export class Sending extends Component {
-  state = { exchange: '', key: '', message: '' };
-
   constructor(props) {
     super(props);
-    this.changeHandlerExchange = this.changeHandlerExchange.bind(this); 
-    this.changeHandlerKey = this.changeHandlerKey.bind(this); 
-    this.changeHandlerMessage = this.changeHandlerMessage.bind(this); 
+    this.state = { 
+      exchange: '', 
+      key: '', 
+      message: '',
+      redirect: false
+    };
   }
 
   changeHandlerExchange = (event) => {
@@ -26,54 +28,70 @@ export class Sending extends Component {
     this.setState({message: event.target.value});
   }
 
-  handleSubmit(event) {
+  setRedirect = () => {
+    this.setState({
+      redirect: true
+    })
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to='/login' />;
+    }
+  }
+
+  async handleSubmit(event) {
     event.preventDefault();
-    fetch(`${config}/messages`, {
+    var response = await fetch(`${config.URI}/messages`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${tokenData.currentTokensValue.AccessToken}`
+            'Authorization': `Bearer ${data.currentUser.accessToken}`
         },
         body: {
           "exchange": this.state.exchange,
           "key": this.state.key,
           "message": this.state.message
         }
-    })
-    .then((response) => {
-        if (response.status === 401 && tokenData.currentTokensValue.RefreshToken !== null) {
-          tokenData.refresh(tokenData.currentTokensValue.RefreshToken);
-          this.handleSubmit(event);
-        }
-    })
-    .catch(function (error) {
-        console.log(error);
     });
+
+    if (response.status === 401) {
+      if (data.currentUser.refreshToken !== null && data.currentUser.refreshToken !== undefined) {
+        data.refresh();
+        this.handleSubmit(event);
+      }
+      else {
+        this.setRedirect();
+      }
+    }
   }
 
   render () {
     return (
-      <div className="Sending">
-        <Form onSubmit={this.handleSubmit}>
-          <Form.Group className="form-group row" controlId="formBasicExchange">
-            <Form.Label className="col-sm-2 col-form-label">Exchange</Form.Label>
-            <Form.Control className="col-sm-5" placeholder="Exchange" onChange={this.changeHandlerExchange}/>
-          </Form.Group>
+      <div>
+        {this.renderRedirect()}
+        <div className="Sending">
+          <Form onSubmit={this.handleSubmit.bind(this)}>
+            <Form.Group className="form-group row" controlId="formBasicExchange">
+              <Form.Label className="col-sm-2 col-form-label">Exchange</Form.Label>
+              <Form.Control className="col-sm-5" placeholder="Exchange" onChange={this.changeHandlerExchange.bind(this)}/>
+            </Form.Group>
 
-          <Form.Group className="form-group row" controlId="formBasicKey">
-            <Form.Label className="col-sm-2 col-form-label">Key</Form.Label>
-            <Form.Control  className="col-sm-5" type="text" placeholder="Key" onChange={this.changeHandlerKey}/>
-          </Form.Group>
+            <Form.Group className="form-group row" controlId="formBasicKey">
+              <Form.Label className="col-sm-2 col-form-label">Key</Form.Label>
+              <Form.Control  className="col-sm-5" type="text" placeholder="Key" onChange={this.changeHandlerKey.bind(this)}/>
+            </Form.Group>
 
-          <Form.Group className="form-group row" controlId="formBasicMessage">
-            <Form.Label className="col-sm-2 col-form-label">Message</Form.Label>
-            <Form.Control  className="col-sm-5" type="text" placeholder="Message" onChange={this.changeHandlerMessage}/>
-          </Form.Group>
+            <Form.Group className="form-group row" controlId="formBasicMessage">
+              <Form.Label className="col-sm-2 col-form-label">Message</Form.Label>
+              <Form.Control  className="col-sm-5" type="text" placeholder="Message" onChange={this.changeHandlerMessage.bind(this)}/>
+            </Form.Group>
 
-          <Button variant="primary" type="submit">
-            Send
-          </Button>
-        </Form>
+            <Button className="button" variant="primary" type="submit">
+              Send
+            </Button>
+          </Form>
+        </div>
       </div>
     );
   }

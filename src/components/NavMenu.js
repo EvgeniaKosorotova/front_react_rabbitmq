@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import {tokenData} from './TokenData';
+import data from './Data';
 
 export class NavMenu extends Component {
   render () {
@@ -9,13 +9,13 @@ export class NavMenu extends Component {
         <Navbar bg="light" expand="lg">
           <Navbar.Brand>Message sending application</Navbar.Brand>
           {
-            tokenData.currentTokensValue.RefreshToken !== null &&
+            data.currentUser.refreshToken !== "" &&
             <Nav className="mr-auto">
               <Nav.Link href="/messages">Sending</Nav.Link>
             </Nav>
           }
           {
-            tokenData.currentTokensValue.RefreshToken === null &&
+            data.currentUser.refreshToken === "" &&
             <Nav>
               <Nav.Link href="/register">Register</Nav.Link>
               <Nav.Link href="/login">Login</Nav.Link>
