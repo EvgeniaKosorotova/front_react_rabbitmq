@@ -10,7 +10,7 @@ export class Login extends Component {
     this.state = { 
       username: '', 
       password: '',
-      redirect: ''
+      redirectName: ''
     };
   }
 
@@ -24,18 +24,21 @@ export class Login extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    await data.login(this.state.username, this.state.password);
-    this.setRedirect("messages");
+    let isRedirect = await data.loginAsync(this.state.username, this.state.password);
+    
+    if (isRedirect) {
+      this.setRedirect("messages");
+    }
   }
 
-  setRedirect = (name = "register") => {
+  setRedirect = (name) => {
     this.setState({
-      redirect: name
+      redirectName: name
     })
   }
 
   renderRedirect = () => {
-    switch(this.state.redirect) {
+    switch(this.state.redirectName) {
       case "register":
         return <Redirect to='/register' />;
       case "messages":

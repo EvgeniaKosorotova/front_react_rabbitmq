@@ -3,44 +3,65 @@ import {config} from '../config';
 let data = {
   currentUser: {
     username: "",
-    accessToken: "",
-    refreshToken: "",
+    accessToken: null,
+    refreshToken: null,
   },
 
-  async login (username, password) {
+  async loginAsync (username, password) {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     };
   
-    var response = await fetch(`${config.URI}/tokens`, requestOptions);
+    let response = await fetch(`${config.URL}/tokens`, requestOptions);
   
     if (response.ok) {
-      var data = await response.json();
+      let data = await response.json();
       this.currentUser.accessToken = data.accessToken;
       this.currentUser.refreshToken = data.refreshToken;
+      return true;
     }
+
+    return false;
   },
 
-  async refresh () {
+  async refreshAsync () {
     const requestOptions = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' }
     };
   
-    var response = await fetch(`${config.URI}/tokens?refreshToken=${this.currentUser.refreshToken}`, requestOptions);
+    let response = await fetch(`${config.URL}/tokens?refreshToken=${this.currentUser.refreshToken}`, requestOptions);
   
     if (response.ok) {
-      var data = await response.json();
+      let data = await response.json();
       this.currentUser.accessToken = data.accessToken;
       this.currentUser.refreshToken = data.refreshToken;
     }
   },
 
+  async registerAsync (username, password) {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    };
+
+    let response = await fetch(`${config.URL}/users`, requestOptions);
+  
+    if (response.ok) {
+      let data = await response.json();
+      this.currentUser.accessToken = data.username;
+      return true;
+    }
+
+    return false;
+  },
+
   logout() {
-    this.currentUser.accessToken = "";
-    this.currentUser.refreshToken = "";
+    this.currentUser.accessToken = null;
+    this.currentUser.refreshToken = null;
   }
 }
 

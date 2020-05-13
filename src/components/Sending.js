@@ -12,7 +12,7 @@ export class Sending extends Component {
       exchange: '', 
       key: '', 
       message: '',
-      redirect: false
+      isRedirect: false
     };
   }
 
@@ -30,19 +30,19 @@ export class Sending extends Component {
 
   setRedirect = () => {
     this.setState({
-      redirect: true
+      isRedirect: true
     })
   }
 
   renderRedirect = () => {
-    if (this.state.redirect) {
+    if (this.state.isRedirect) {
       return <Redirect to='/login' />;
     }
   }
 
   async handleSubmit(event) {
     event.preventDefault();
-    var response = await fetch(`${config.URI}/messages`, {
+    let response = await fetch(`${config.URL}/messages`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -56,8 +56,8 @@ export class Sending extends Component {
     });
 
     if (response.status === 401) {
-      if (data.currentUser.refreshToken !== null && data.currentUser.refreshToken !== undefined) {
-        data.refresh();
+      if (data.currentUser.refreshToken !== null) {
+        data.refreshAsync();
         this.handleSubmit(event);
       }
       else {
