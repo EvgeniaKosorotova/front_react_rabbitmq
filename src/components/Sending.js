@@ -64,8 +64,9 @@ export class Sending extends Component {
         this.setRedirect();
       }
     }
-
-    document.getElementById("send-form").reset();
+    else {
+      document.getElementById("send-form").reset();
+    }
   }
 
   render () {

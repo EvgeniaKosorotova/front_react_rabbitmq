@@ -25,8 +25,13 @@ export class Register extends Component {
   async handleSubmit(event) {
     event.preventDefault();
     let isRedirect = await data.registerAsync(this.state.username, this.state.password);
-    this.setRedirect(isRedirect);
-    document.getElementById("register-form").reset();
+
+    if (isRedirect) {
+      this.setRedirect(isRedirect);
+    }
+    else {
+      document.getElementById("register-form").reset();
+    }
   }
 
   setRedirect = (isRedirect) => {
@@ -46,7 +51,7 @@ export class Register extends Component {
       <div>
         {this.renderRedirect()}
         <div className = "Register">
-          <Form id="register-form" onSubmit={this.handleSubmit}>
+          <Form id="register-form" onSubmit={this.handleSubmit.bind(this)}>
             <Form.Group className="form-group row" controlId="formBasicUsername">
               <Form.Label className="col-sm-2 col-form-label">Username</Form.Label>
               <Form.Control className="col-sm-5" placeholder="Username" required="required" onChange={this.changeHandlerUsername.bind(this)}/>

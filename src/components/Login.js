@@ -29,8 +29,9 @@ export class Login extends Component {
     if (isRedirect) {
       this.setRedirect("messages");
     }
-
-    document.getElementById("login-form").reset();
+    else {
+      document.getElementById("login-form").reset();
+    }
   }
 
   setRedirect = (name) => {
