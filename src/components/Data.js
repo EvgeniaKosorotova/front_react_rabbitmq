@@ -1,10 +1,12 @@
 import {config} from '../config';
 
 let data = {
-  currentUser: {
-    username: "",
-    accessToken: null,
-    refreshToken: null,
+  getField(name) {
+    return localStorage.getItem(name);
+  },
+
+  setField(name, value) {
+    localStorage.setItem(name, value);
   },
 
   async loginAsync (username, password) {
@@ -18,8 +20,8 @@ let data = {
   
     if (response.ok) {
       let data = await response.json();
-      this.currentUser.accessToken = data.accessToken;
-      this.currentUser.refreshToken = data.refreshToken;
+      this.setField('accessToken', data.accessToken);
+      this.setField('refreshToken', data.refreshToken);
       return true;
     }
 
@@ -32,13 +34,16 @@ let data = {
       headers: { 'Content-Type': 'application/json' }
     };
   
-    let response = await fetch(`${config.URL}/tokens?refreshToken=${this.currentUser.refreshToken}`, requestOptions);
+    let response = await fetch(`${config.URL}/tokens?refreshToken=${this.getField('refreshToken')}`, requestOptions);
   
     if (response.ok) {
       let data = await response.json();
-      this.currentUser.accessToken = data.accessToken;
-      this.currentUser.refreshToken = data.refreshToken;
+      this.setField('accessToken', data.accessToken);
+      this.setField('refreshToken', data.refreshToken);
+      return true;
     }
+    
+    return false;
   },
 
   async registerAsync (username, password) {
@@ -52,7 +57,7 @@ let data = {
   
     if (response.ok) {
       let data = await response.json();
-      this.currentUser.accessToken = data.username;
+      this.setField('username', data.username);
       return true;
     }
 
@@ -60,8 +65,7 @@ let data = {
   },
 
   logout() {
-    this.currentUser.accessToken = null;
-    this.currentUser.refreshToken = null;
+    localStorage.clear();
   }
 }
 

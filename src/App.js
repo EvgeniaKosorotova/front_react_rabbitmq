@@ -10,11 +10,12 @@ import { Sending } from './components/Sending';
 import data from './components/Data';
 
 function App() {
+  let refreshToken = data.getField('refreshToken');
   return (
     <div className="App">
       <Layout>
         <BrowserRouter>
-          {data.currentUser.refreshToken === null ? <Redirect to='/login'/> : <Redirect to='/messages'/>}
+          {(refreshToken === null || refreshToken === undefined) ? <Redirect to='/login'/> : <Redirect to='/messages'/>}
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
           <Route path="/messages" component={Sending} />

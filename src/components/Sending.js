@@ -42,11 +42,12 @@ export class Sending extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
+    let accessToken = data.getField('accessToken');
     let response = await fetch(`${config.URL}/messages`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${data.currentUser.accessToken}`
+            'Authorization': `Bearer ${accessToken}`
         },
         body: {
           "exchange": this.state.exchange,
@@ -56,9 +57,11 @@ export class Sending extends Component {
     });
 
     if (response.status === 401) {
-      if (data.currentUser.refreshToken !== null) {
-        data.refreshAsync();
-        this.handleSubmit(event);
+      let refreshToken = data.getField('refreshToken');
+      if (refreshToken !== null && refreshToken !== undefined) {
+        if (await data.refreshAsync()) {
+          this.handleSubmit(event);
+        }
       }
       else {
         this.setRedirect();
