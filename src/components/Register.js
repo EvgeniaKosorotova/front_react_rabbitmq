@@ -12,8 +12,6 @@ export class Register extends Component {
       password: '',
       isRedirect: false
     };
-    this.changeHandlerUsername = this.changeHandlerUsername.bind(this); 
-    this.changeHandlerPassword = this.changeHandlerPassword.bind(this); 
   }
 
   changeHandlerUsername = (event) => {
@@ -28,6 +26,7 @@ export class Register extends Component {
     event.preventDefault();
     let isRedirect = await data.registerAsync(this.state.username, this.state.password);
     this.setRedirect(isRedirect);
+    document.getElementById("register-form").reset();
   }
 
   setRedirect = (isRedirect) => {
@@ -47,17 +46,17 @@ export class Register extends Component {
       <div>
         {this.renderRedirect()}
         <div className = "Register">
-          <Form onSubmit={this.handleSubmit}>
+          <Form id="register-form" onSubmit={this.handleSubmit}>
             <Form.Group className="form-group row" controlId="formBasicUsername">
               <Form.Label className="col-sm-2 col-form-label">Username</Form.Label>
-              <Form.Control className="col-sm-5" placeholder="Username" required="required" onChange={this.changeHandlerUsername}/>
+              <Form.Control className="col-sm-5" placeholder="Username" required="required" onChange={this.changeHandlerUsername.bind(this)}/>
             </Form.Group>
 
             <Form.Group className="form-group row" controlId="formBasicPassword">
               <Form.Label className="col-sm-2 col-form-label">Password</Form.Label>
               <Form.Control  className="col-sm-5" type="password" placeholder="Password" 
                 required="required" 
-                onChange={this.changeHandlerPassword}/>
+                onChange={this.changeHandlerPassword.bind(this)}/>
             </Form.Group>
 
             <Button className="button" variant="primary" type="submit">

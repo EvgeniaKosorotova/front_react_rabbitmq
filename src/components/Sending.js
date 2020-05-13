@@ -64,6 +64,8 @@ export class Sending extends Component {
         this.setRedirect();
       }
     }
+
+    document.getElementById("send-form").reset();
   }
 
   render () {
@@ -71,7 +73,7 @@ export class Sending extends Component {
       <div>
         {this.renderRedirect()}
         <div className="Sending">
-          <Form onSubmit={this.handleSubmit.bind(this)}>
+          <Form id="send-form" onSubmit={this.handleSubmit.bind(this)}>
             <Form.Group className="form-group row" controlId="formBasicExchange">
               <Form.Label className="col-sm-2 col-form-label">Exchange</Form.Label>
               <Form.Control className="col-sm-5" placeholder="Exchange" onChange={this.changeHandlerExchange.bind(this)}/>
