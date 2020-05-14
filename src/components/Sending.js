@@ -12,20 +12,18 @@ export class Sending extends Component {
       exchange: '', 
       key: '', 
       message: '',
+      formErrors: {exchange: '', key: '', message: ''},
+      exchangeValid: false,
+      keyValid: false,
+      messageValid: false,
       isRedirect: false
     };
   }
 
-  changeHandlerExchange = (event) => {
-    this.setState({exchange: event.target.value});
-  }
-
-  changeHandlerKey = (event) => {
-    this.setState({key: event.target.value});
-  }
-
-  changeHandlerMessage = (event) => {
-    this.setState({message: event.target.value});
+  handleInput(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({[name]: value});
   }
 
   setRedirect = () => {
@@ -49,27 +47,30 @@ export class Sending extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`
         },
-        body: {
+        body: JSON.stringify({
           "exchange": this.state.exchange,
           "key": this.state.key,
           "message": this.state.message
-        }
+        })
     });
 
     if (response.status === 401) {
       let refreshToken = data.getField('refreshToken');
+
       if (refreshToken !== null && refreshToken !== undefined) {
         if (await data.refreshAsync()) {
           this.handleSubmit(event);
+        }
+        else {
+          document.getElementById("send-form").reset();
         }
       }
       else {
         this.setRedirect();
       }
     }
-    else {
-      document.getElementById("send-form").reset();
-    }
+
+    //document.getElementById("send-form").reset();
   }
 
   render () {
@@ -80,17 +81,26 @@ export class Sending extends Component {
           <Form id="send-form" onSubmit={this.handleSubmit.bind(this)}>
             <Form.Group className="form-group row" controlId="formBasicExchange">
               <Form.Label className="col-sm-2 col-form-label">Exchange</Form.Label>
-              <Form.Control className="col-sm-5" placeholder="Exchange" onChange={this.changeHandlerExchange.bind(this)}/>
+              <Form.Control className="col-sm-5" placeholder="Exchange" required 
+              name="exchange"
+              value={this.state.exchange}
+              onChange={this.handleInput.bind(this)}/>
             </Form.Group>
 
             <Form.Group className="form-group row" controlId="formBasicKey">
               <Form.Label className="col-sm-2 col-form-label">Key</Form.Label>
-              <Form.Control  className="col-sm-5" type="text" placeholder="Key" onChange={this.changeHandlerKey.bind(this)}/>
+              <Form.Control  className="col-sm-5" type="text" placeholder="Key" required 
+              name="key"
+              value={this.state.key}
+              onChange={this.handleInput.bind(this)}/>
             </Form.Group>
 
             <Form.Group className="form-group row" controlId="formBasicMessage">
               <Form.Label className="col-sm-2 col-form-label">Message</Form.Label>
-              <Form.Control  className="col-sm-5" type="text" placeholder="Message" onChange={this.changeHandlerMessage.bind(this)}/>
+              <Form.Control  className="col-sm-5" type="text" placeholder="Message" required 
+              name="message"
+              value={this.state.message}
+              onChange={this.handleInput.bind(this)}/>
             </Form.Group>
 
             <Button className="button" variant="primary" type="submit">

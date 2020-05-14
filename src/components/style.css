@@ -18,3 +18,9 @@
   right: 7rem;
   margin: 1rem;
 }
+
+.error {
+  font-size: 8pt;
+  color:red;
+  display: block;
+}

@@ -42,8 +42,10 @@ let data = {
       this.setField('refreshToken', data.refreshToken);
       return true;
     }
-    
-    return false;
+    else {
+      this.logout();
+      return false;
+    }
   },
 
   async registerAsync (username, password) {

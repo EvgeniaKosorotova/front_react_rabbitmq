@@ -10,16 +10,17 @@ export class Login extends Component {
     this.state = { 
       username: '', 
       password: '',
+      formErrors: {username: '', password: ''},
+      usernameValid: false,
+      passwordValid: false,
       redirectName: ''
     };
   }
 
-  changeHandlerUsername = (event) => {
-    this.setState({username: event.target.value});
-  }
-
-  changeHandlerPassword = (event) => {
-    this.setState({password: event.target.value});
+  handleInput(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({[name]: value});
   }
 
   async handleSubmit(event) {
@@ -59,12 +60,18 @@ export class Login extends Component {
           <Form id="login-form" onSubmit={this.handleSubmit.bind(this)}>
             <Form.Group className="form-group row" controlId="formBasicUsername">
               <Form.Label className="col-sm-2 col-form-label">Username</Form.Label>
-              <Form.Control className="col-sm-5" placeholder="Username" required="required" onChange={this.changeHandlerUsername.bind(this)}/>
+              <Form.Control className="col-sm-5" placeholder="Username" required 
+              name="username"
+              value={this.state.username}
+              onChange={this.handleInput.bind(this)}/>
             </Form.Group>
 
             <Form.Group className="form-group row" controlId="formBasicPassword">
               <Form.Label className="col-sm-2 col-form-label">Password</Form.Label>
-              <Form.Control  className="col-sm-5" type="password" placeholder="Password" required="required" onChange={this.changeHandlerPassword.bind(this)}/>
+              <Form.Control  className="col-sm-5" type="password" placeholder="Password" required 
+              name="password"
+              value={this.state.password}
+              onChange={this.handleInput.bind(this)}/>
             </Form.Group>
 
             <Button className="button" variant="primary" type="submit">
