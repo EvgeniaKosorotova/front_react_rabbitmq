@@ -23,7 +23,50 @@ export class Sending extends Component {
   handleInput(e) {
     const name = e.target.name;
     const value = e.target.value;
-    this.setState({[name]: value});
+    this.setState({[name]: value}, () => { this.validateField(name, value) });
+  }
+  
+  resetFields() {
+    this.setState({
+      exchange: '', 
+      key: '', 
+      message: '',
+      formErrors: {exchange: '', key: '', message: ''},
+      exchangeValid: false,
+      keyValid: false,
+      messageValid: false,
+      isRedirect: false
+    });
+  }
+
+  validateField(fieldName, value) {
+    let fieldValidationErrors = this.state.formErrors;
+    let exchangeValid = this.state.exchangeValid;
+    let keyValid = this.state.keyValid;
+    let messageValid = this.state.messageValid;
+
+    switch (fieldName) {
+      case 'exchange':
+        exchangeValid = value.match(/^[a-zA-Z0-9]{1}[a-zA-Z0-9_]{0,}$/i) && value.length <= 30;
+        fieldValidationErrors.exchange = exchangeValid ? '' : `Field ${fieldName} is invalid`;
+        break;
+      case 'key':
+        keyValid = value.match(/^[a-zA-Z0-9]{1}[a-zA-Z0-9_.]{0,}$/i) && value.length <= 30;
+        fieldValidationErrors.key = keyValid ? '' : `Field ${fieldName} is invalid`;
+        break;
+      case 'message':
+        messageValid = true;
+        fieldValidationErrors.message = messageValid ? '': `Field ${fieldName} is invalid`;
+        break;
+      default:
+        break;
+    }
+
+    this.setState({formErrors: fieldValidationErrors,
+      exchangeValid: exchangeValid,
+      keyValid: keyValid,
+      messageValid: messageValid
+    });
   }
 
   setRedirect = () => {
@@ -62,15 +105,16 @@ export class Sending extends Component {
           this.handleSubmit(event);
         }
         else {
-          document.getElementById("send-form").reset();
+          this.resetFields();
         }
       }
       else {
         this.setRedirect();
       }
     }
-
-    //document.getElementById("send-form").reset();
+    else {
+      this.resetFields();
+    }
   }
 
   render () {
@@ -81,26 +125,35 @@ export class Sending extends Component {
           <Form id="send-form" onSubmit={this.handleSubmit.bind(this)}>
             <Form.Group className="form-group row" controlId="formBasicExchange">
               <Form.Label className="col-sm-2 col-form-label">Exchange</Form.Label>
-              <Form.Control className="col-sm-5" placeholder="Exchange" required 
-              name="exchange"
-              value={this.state.exchange}
-              onChange={this.handleInput.bind(this)}/>
+              <div className="col-sm-5">
+                <Form.Control type="text" placeholder="Exchange" required 
+                name="exchange"
+                value={this.state.exchange}
+                onChange={this.handleInput.bind(this)}/>
+                <span className='error'>{!this.state.exchangeValid && this.state.formErrors.exchange}</span>
+              </div>
             </Form.Group>
 
             <Form.Group className="form-group row" controlId="formBasicKey">
               <Form.Label className="col-sm-2 col-form-label">Key</Form.Label>
-              <Form.Control  className="col-sm-5" type="text" placeholder="Key" required 
-              name="key"
-              value={this.state.key}
-              onChange={this.handleInput.bind(this)}/>
+              <div className="col-sm-5">
+                <Form.Control type="text" placeholder="Key" required 
+                name="key"
+                value={this.state.key}
+                onChange={this.handleInput.bind(this)}/>
+                <span className='error'>{!this.state.keyValid && this.state.formErrors.key}</span>
+              </div>
             </Form.Group>
 
             <Form.Group className="form-group row" controlId="formBasicMessage">
               <Form.Label className="col-sm-2 col-form-label">Message</Form.Label>
-              <Form.Control  className="col-sm-5" type="text" placeholder="Message" required 
-              name="message"
-              value={this.state.message}
-              onChange={this.handleInput.bind(this)}/>
+              <div className="col-sm-5">
+                <Form.Control type="text" placeholder="Message" required 
+                name="message"
+                value={this.state.message}
+                onChange={this.handleInput.bind(this)}/>
+                <span className='error'>{!this.state.messageValid && this.state.formErrors.message}</span>
+              </div>
             </Form.Group>
 
             <Button className="button" variant="primary" type="submit">
