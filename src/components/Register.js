@@ -10,9 +10,11 @@ export class Register extends Component {
     this.state = { 
       username: '', 
       password: '',
-      formErrors: {username: '', password: ''},
+      repeatPassword: '',
+      formErrors: {username: '', password: '', repeatPassword: ''},
       usernameValid: true,
       passwordValid: true,
+      repeatPasswordValid: true,
       isRedirect: false
     };
   }
@@ -27,9 +29,11 @@ export class Register extends Component {
     this.setState({
       username: '', 
       password: '',
-      formErrors: {username: '', password: ''},
+      repeatPassword: '',
+      formErrors: {username: '', password: '', repeatPassword: ''},
       usernameValid: true,
       passwordValid: true,
+      repeatPasswordValid: true,
       isRedirect: false
     });
   }
@@ -38,6 +42,7 @@ export class Register extends Component {
     let fieldValidationErrors = this.state.formErrors;
     let usernameValid = this.state.usernameValid;
     let passwordValid = this.state.passwordValid;
+    let repeatPasswordValid = this.state.repeatPasswordValid;
 
     switch (fieldName) {
       case 'username':
@@ -48,13 +53,18 @@ export class Register extends Component {
         passwordValid = value.length >= 6;
         fieldValidationErrors.password = passwordValid ? '': `Field ${fieldName} is too short`;
         break;
+      case 'repeatpassword':
+        repeatPasswordValid = value === this.state.password;
+        fieldValidationErrors.repeatPassword = repeatPasswordValid ? '': `Values do not match`;
+        break;
       default:
         break;
     }
 
     this.setState({formErrors: fieldValidationErrors,
       usernameValid: usernameValid,
-      passwordValid: passwordValid
+      passwordValid: passwordValid,
+      repeatPasswordValid: repeatPasswordValid
     });
   }
 
@@ -107,6 +117,17 @@ export class Register extends Component {
                 value={this.state.password}
                 onChange={this.handleInput.bind(this)}/>
                 <span className='error'>{!this.state.passwordValid && this.state.formErrors.password}</span>
+              </div>
+            </Form.Group>
+
+            <Form.Group className="form-group row" controlId="formBasicRepeatPassword">
+              <Form.Label className="col-sm-2 col-form-label">Repeat password</Form.Label>
+              <div className="col-sm-5">
+                <Form.Control type="password" placeholder="Repeat password" required 
+                name="repeatPassword"
+                value={this.state.repeatPassword}
+                onChange={this.handleInput.bind(this)}/>
+                <span className='error'>{!this.state.repeatPasswordValid && this.state.formErrors.repeatPassword}</span>
               </div>
             </Form.Group>
 
