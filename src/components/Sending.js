@@ -83,37 +83,42 @@ export class Sending extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    let accessToken = data.getField('accessToken');
-    let response = await fetch(`${config.URL}/messages`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          "exchange": this.state.exchange,
-          "key": this.state.key,
-          "message": this.state.message
-        })
-    });
+    try {
+      let accessToken = data.getField('accessToken');
+      let response = await fetch(`${config.URL}/messages`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({
+            "exchange": this.state.exchange,
+            "key": this.state.key,
+            "message": this.state.message
+          })
+      });
 
-    if (response.status === 401) {
-      let refreshToken = data.getField('refreshToken');
+      if (response.status === 401) {
+        let refreshToken = data.getField('refreshToken');
 
-      if (refreshToken !== null && refreshToken !== undefined) {
-        if (await data.refreshAsync()) {
-          this.handleSubmit(event);
+        if (refreshToken !== null && refreshToken !== undefined) {
+          if (await data.refreshAsync()) {
+            this.handleSubmit(event);
+          }
+          else {
+            this.resetFields();
+          }
         }
         else {
-          this.resetFields();
+          this.setRedirect();
         }
       }
       else {
-        this.setRedirect();
+        this.resetFields();
       }
     }
-    else {
-      this.resetFields();
+    catch (e) {
+      console.log(e);
     }
   }
 
