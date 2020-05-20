@@ -9,8 +9,10 @@ import { Register } from './components/Register';
 import { Sending } from './components/Sending';
 import data from './components/Data';
 
-function App() {
+async function App() {
+  await data.checkAccessTokenAsync();
   let refreshToken = data.getField('refreshToken');
+  
   return (
     <div className="App">
       <Layout>

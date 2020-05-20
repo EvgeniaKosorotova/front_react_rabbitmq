@@ -53,11 +53,10 @@ let data = {
         let data = await response.json();
         this.setField('accessToken', data.accessToken);
         this.setField('refreshToken', data.refreshToken);
-        return true;
+        this.setField('expiryDate', moment().add(data.lifeTime));
       }
       else {
         this.logout();
-        return false;
       }
     }
     catch (e) {
