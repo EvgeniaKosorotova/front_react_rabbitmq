@@ -1,4 +1,5 @@
 import {config} from '../config';
+import moment from 'moment';
 
 let data = {
   getField(name) {
@@ -7,6 +8,12 @@ let data = {
 
   setField(name, value) {
     localStorage.setItem(name, value);
+  },
+
+  async checkAccessTokenAsync () {
+    if (this.getField('expiryDate') <= moment()) {
+      await this.refreshAsync();
+    }
   },
 
   async loginAsync (username, password) {
@@ -18,11 +25,11 @@ let data = {
       };
     
       let response = await fetch(`${config.URL}/tokens`, requestOptions);
-    
       if (response.ok) {
         let data = await response.json();
         this.setField('accessToken', data.accessToken);
         this.setField('refreshToken', data.refreshToken);
+        this.setField('expiryDate', moment().add(data.lifeTime));
         return true;
       }
 

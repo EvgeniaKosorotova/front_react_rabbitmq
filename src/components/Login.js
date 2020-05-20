@@ -11,8 +11,6 @@ export class Login extends Component {
       username: '', 
       password: '',
       formErrors: {username: '', password: ''},
-      usernameValid: false,
-      passwordValid: false,
       redirectName: ''
     };
   }
@@ -28,34 +26,27 @@ export class Login extends Component {
       username: '', 
       password: '',
       formErrors: {username: '', password: ''},
-      usernameValid: false,
-      passwordValid: false,
       redirectName: ''
     });
   }
 
   validateField(fieldName, value) {
     let fieldValidationErrors = this.state.formErrors;
-    let usernameValid = this.state.usernameValid;
-    let passwordValid = this.state.passwordValid;
 
     switch (fieldName) {
       case 'username':
-        usernameValid = value.replace(/\s+/g, '').length > 0;
+        let usernameValid = value.replace(/\s+/g, '').length > 0;
         fieldValidationErrors.username = usernameValid ? '' : `Field ${fieldName} is invalid`;
         break;
       case 'password':
-        passwordValid = value.length >= 6;
+        let passwordValid = value.length >= 6;
         fieldValidationErrors.password = passwordValid ? '': `Field ${fieldName} is too short`;
         break;
       default:
         break;
     }
 
-    this.setState({formErrors: fieldValidationErrors,
-      usernameValid: usernameValid,
-      passwordValid: passwordValid
-    });
+    this.setState({formErrors: fieldValidationErrors});
   }
 
   async handleSubmit(event) {
@@ -100,7 +91,7 @@ export class Login extends Component {
                 name="username"
                 value={this.state.username}
                 onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.usernameValid && this.state.formErrors.username}</span>
+                <span className='error'>{this.state.formErrors.username !== '' && this.state.formErrors.username}</span>
               </div>
             </Form.Group>
 
@@ -111,7 +102,7 @@ export class Login extends Component {
                 name="password"
                 value={this.state.password}
                 onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.passwordValid && this.state.formErrors.password}</span>
+                <span className='error'>{this.state.formErrors.password !== '' && this.state.formErrors.password}</span>
               </div>
             </Form.Group>
 

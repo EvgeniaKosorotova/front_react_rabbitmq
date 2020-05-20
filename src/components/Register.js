@@ -12,9 +12,6 @@ export class Register extends Component {
       password: '',
       repeatPassword: '',
       formErrors: {username: '', password: '', repeatPassword: ''},
-      usernameValid: true,
-      passwordValid: true,
-      repeatPasswordValid: true,
       isRedirect: false
     };
   }
@@ -31,41 +28,31 @@ export class Register extends Component {
       password: '',
       repeatPassword: '',
       formErrors: {username: '', password: '', repeatPassword: ''},
-      usernameValid: true,
-      passwordValid: true,
-      repeatPasswordValid: true,
       isRedirect: false
     });
   }
   
   validateField(fieldName, value) {
     let fieldValidationErrors = this.state.formErrors;
-    let usernameValid = this.state.usernameValid;
-    let passwordValid = this.state.passwordValid;
-    let repeatPasswordValid = this.state.repeatPasswordValid;
 
     switch (fieldName) {
       case 'username':
-        usernameValid = value.replace(/\s+/g, '').length > 0;
+        let usernameValid = value.replace(/\s+/g, '').length > 0;
         fieldValidationErrors.username = usernameValid ? '' : `Field ${fieldName} is invalid`;
         break;
       case 'password':
-        passwordValid = value.length >= 6;
+        let passwordValid = value.length >= 6;
         fieldValidationErrors.password = passwordValid ? '': `Field ${fieldName} is too short`;
         break;
       case 'repeatpassword':
-        repeatPasswordValid = value === this.state.password;
+        let repeatPasswordValid = value === this.state.password;
         fieldValidationErrors.repeatPassword = repeatPasswordValid ? '': `Values do not match`;
         break;
       default:
         break;
     }
 
-    this.setState({formErrors: fieldValidationErrors,
-      usernameValid: usernameValid,
-      passwordValid: passwordValid,
-      repeatPasswordValid: repeatPasswordValid
-    });
+    this.setState({formErrors: fieldValidationErrors});
   }
 
   async handleSubmit(event) {
@@ -105,7 +92,7 @@ export class Register extends Component {
                 name="username"
                 value={this.state.username}
                 onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.usernameValid && this.state.formErrors.username}</span>
+                <span className='error'>{this.state.formErrors.username !== '' && this.state.formErrors.username}</span>
               </div>
             </Form.Group>
 
@@ -116,7 +103,7 @@ export class Register extends Component {
                 name="password"
                 value={this.state.password}
                 onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.passwordValid && this.state.formErrors.password}</span>
+                <span className='error'>{this.state.formErrors.password !== '' && this.state.formErrors.password}</span>
               </div>
             </Form.Group>
 
@@ -127,7 +114,7 @@ export class Register extends Component {
                 name="repeatPassword"
                 value={this.state.repeatPassword}
                 onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.repeatPasswordValid && this.state.formErrors.repeatPassword}</span>
+                <span className='error'>{this.state.formErrors.repeatPassword !== '' && this.state.formErrors.repeatPassword}</span>
               </div>
             </Form.Group>
 
