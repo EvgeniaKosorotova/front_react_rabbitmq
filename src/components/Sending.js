@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import { Form, Button } from 'react-bootstrap';
-//import { Redirect } from "react-router-dom";
-import './style.css';
-import sendService from './SendService';
+import '../css/style.css';
+import sendService from '../services/SendService';
 
 export class Sending extends Component {
   constructor(props) {
@@ -11,8 +10,7 @@ export class Sending extends Component {
       exchange: '', 
       key: '', 
       message: '',
-      formErrors: {exchange: '', key: '', message: ''},
-      //isRedirect: false
+      formErrors: {exchange: '', key: '', message: ''}
     };
   }
 
@@ -54,19 +52,7 @@ export class Sending extends Component {
 
     this.setState({formErrors: fieldValidationErrors});
   }
-/*
-  setRedirect = () => {
-    this.setState({
-      isRedirect: true
-    })
-  }
 
-  renderRedirect = () => {
-    if (this.state.isRedirect) {
-      return <Redirect to='/login' />;
-    }
-  }
-*/
   async handleSubmit(event) {
     event.preventDefault();
     sendService.sendAsync(this.state.exchange, this.state.key, this.state.message);
@@ -82,9 +68,9 @@ export class Sending extends Component {
               <Form.Label className="col-sm-2 col-form-label">Exchange</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="text" placeholder="Exchange" required 
-                name="exchange"
-                value={this.state.exchange}
-                onChange={this.handleInput.bind(this)}/>
+                  name="exchange"
+                  value={this.state.exchange}
+                  onChange={this.handleInput.bind(this)}/>
                 <span className='error'>{this.state.formErrors.exchange !== '' && this.state.formErrors.exchange}</span>
               </div>
             </Form.Group>
@@ -93,9 +79,9 @@ export class Sending extends Component {
               <Form.Label className="col-sm-2 col-form-label">Key</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="text" placeholder="Key" required 
-                name="key"
-                value={this.state.key}
-                onChange={this.handleInput.bind(this)}/>
+                  name="key"
+                  value={this.state.key}
+                  onChange={this.handleInput.bind(this)}/>
                 <span className='error'>{this.state.formErrors.key !== '' && this.state.formErrors.key}</span>
               </div>
             </Form.Group>
@@ -104,9 +90,9 @@ export class Sending extends Component {
               <Form.Label className="col-sm-2 col-form-label">Message</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="text" placeholder="Message" required 
-                name="message"
-                value={this.state.message}
-                onChange={this.handleInput.bind(this)}/>
+                  name="message"
+                  value={this.state.message}
+                  onChange={this.handleInput.bind(this)}/>
                 <span className='error'>{this.state.formErrors.message !== '' && this.state.formErrors.message}</span>
               </div>
             </Form.Group>

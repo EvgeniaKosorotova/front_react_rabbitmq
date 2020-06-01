@@ -1,11 +1,12 @@
 import {config} from '../config';
-import data from './Data';
+import dataService from './DataService';
 
 let sendService = {
   async sendAsync (exchange, key, message) {
-    await data.checkAccessTokenAsync();
+    await dataService.checkAccessTokenAsync();
+    
     try {
-      let accessToken = data.getField('accessToken');
+      let accessToken = dataService.getField('accessToken');
       await fetch(`${config.URL}/messages`, {
           method: 'POST',
           headers: {

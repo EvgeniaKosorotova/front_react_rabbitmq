@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from "react-router-dom";
-import './style.css';
-import data from './Data';
+import '../css/style.css';
+import UserService from '../services/UserService';
 
 export class Register extends Component {
   constructor(props) {
@@ -57,7 +57,7 @@ export class Register extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    let isRedirect = await data.registerAsync(this.state.username, this.state.password);
+    let isRedirect = await UserService.registerAsync(this.state.username, this.state.password);
 
     if (isRedirect) {
       this.setRedirect(isRedirect);
@@ -89,9 +89,9 @@ export class Register extends Component {
               <Form.Label className="col-sm-2 col-form-label">Username</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="text" placeholder="Username" required 
-                name="username"
-                value={this.state.username}
-                onChange={this.handleInput.bind(this)}/>
+                  name="username"
+                  value={this.state.username}
+                  onChange={this.handleInput.bind(this)}/>
                 <span className='error'>{this.state.formErrors.username !== '' && this.state.formErrors.username}</span>
               </div>
             </Form.Group>
@@ -100,9 +100,9 @@ export class Register extends Component {
               <Form.Label className="col-sm-2 col-form-label">Password</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="password" placeholder="Password" required 
-                name="password"
-                value={this.state.password}
-                onChange={this.handleInput.bind(this)}/>
+                  name="password"
+                  value={this.state.password}
+                  onChange={this.handleInput.bind(this)}/>
                 <span className='error'>{this.state.formErrors.password !== '' && this.state.formErrors.password}</span>
               </div>
             </Form.Group>
@@ -111,9 +111,9 @@ export class Register extends Component {
               <Form.Label className="col-sm-2 col-form-label">Repeat password</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="password" placeholder="Repeat password" required 
-                name="repeatPassword"
-                value={this.state.repeatPassword}
-                onChange={this.handleInput.bind(this)}/>
+                  name="repeatPassword"
+                  value={this.state.repeatPassword}
+                  onChange={this.handleInput.bind(this)}/>
                 <span className='error'>{this.state.formErrors.repeatPassword !== '' && this.state.formErrors.repeatPassword}</span>
               </div>
             </Form.Group>
