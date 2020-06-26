@@ -1,13 +1,14 @@
 import {config} from '../config';
 import dataService from './DataService';
+import TokenService from './TokenService';
 
 let sendService = {
   async sendAsync (exchange, key, message) {
-    await dataService.checkAccessTokenAsync();
+    await TokenService.checkAccessTokenAsync();
     
     try {
       let accessToken = dataService.getField('accessToken');
-      await fetch(`${config.URL}/messages`, {
+      let response = await fetch(`${config.URL}/messages`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -19,6 +20,8 @@ let sendService = {
             "message": message
           })
       });
+      
+      return response.ok ? true : false;
     }
     catch (e) {
       console.log(e);

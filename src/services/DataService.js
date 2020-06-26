@@ -1,6 +1,6 @@
 let dataService = {
   getField(name) {
-    return localStorage.getItem(name);
+    return localStorage.hasOwnProperty(name) ? localStorage.getItem(name) : null;
   },
 
   setField(name, value) {

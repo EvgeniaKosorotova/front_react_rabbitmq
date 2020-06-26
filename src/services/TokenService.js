@@ -5,12 +5,22 @@ import dataService from './DataService';
 
 let TokenService = {
   async checkAccessTokenAsync () {
-    let expiryDate = moment(new Date(dataService.getField('expiryDate')).toISOString());
-    let now = moment(new Date().toISOString());
+    let expiryDateField = dataService.getField('expiryDate');
+    let isRefresh = false;
 
-    if (expiryDate <= now) {
-      await this.refreshAsync();
+    if (expiryDateField != 'null') {
+      let expiryDate = moment(new Date(expiryDateField).toISOString());
+      let now = moment(new Date().toISOString());
+  
+      if (expiryDate <= now) {
+        isRefresh = true;
+      }
     }
+    else {
+      isRefresh = true;
+    }
+    
+    isRefresh && await this.refreshAsync();
   },
 
   async refreshAsync() {

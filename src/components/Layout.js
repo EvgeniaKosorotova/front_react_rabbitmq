@@ -4,6 +4,7 @@ import { NavMenu } from './NavMenu';
 
 export default class Layout extends Component {
   render () {
+
     return (
       <div>
         <NavMenu/>

@@ -10,7 +10,8 @@ export class Sending extends Component {
       exchange: '', 
       key: '', 
       message: '',
-      formErrors: {exchange: '', key: '', message: ''}
+      formErrors: {exchange: '', key: '', message: ''},
+      isSending: false
     };
   }
 
@@ -55,8 +56,10 @@ export class Sending extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    sendService.sendAsync(this.state.exchange, this.state.key, this.state.message);
-    this.resetFields();
+    this.setState({isSending : true});
+    let isSend = await sendService.sendAsync(this.state.exchange, this.state.key, this.state.message);
+    this.setState({isSending : !isSend});
+    isSend && this.resetFields();
   }
 
   render () {
@@ -97,7 +100,7 @@ export class Sending extends Component {
               </div>
             </Form.Group>
 
-            <Button className="button" variant="primary" type="submit">
+            <Button className="button" variant={this.state.isSending ? "secondary" : "primary"} type="submit" disabled={this.state.isSending}>
               Send
             </Button>
           </Form>

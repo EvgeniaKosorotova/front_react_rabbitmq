@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
-import { Redirect } from "react-router-dom";
-import '../custom.css'
+import UserService from '../services/UserService';
+import RoleService from '../services/RoleService';
 
-default export class UsersTable extends Component {
+export default class UsersTable extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             data: [],
             isLoading: true,
-            columns: ["Number", "Name", "Role"],
-            isRedirect: false,
+            columns: ["Id", "Username", "Role"],
+            roles: [],
+            isEdit: false,
+            editData: {
+                id: null,
+                username: null,
+                roleId: null,
+                password: null
+            }
         };
-        this.setRedirect.bind(this);
     }
 
     componentDidMount() {
@@ -20,8 +26,12 @@ default export class UsersTable extends Component {
     }
 
     getData = async () => {
-        let data = await ConfigsService.getAllConfigs();
-        this.setState({ data: data, isLoading: false });
+        let data = await UserService.getAsync();
+        let roles = await RoleService.getAsync();
+
+        if (data !== undefined && roles !== undefined) {
+            this.setState({ data: data.users, isLoading: false, roles: roles.roles });
+        }
     }
 
     renderColumns() {
@@ -35,24 +45,26 @@ default export class UsersTable extends Component {
         ));
     }
 
-    setRedirect = async (code) => {
-        let data = await ConfigsService.getConfig(code);
+    setEdit = async (data) => {
         this.setState({
-            isRedirect: true,
-            editCode: code,
-            editData: data
+            isEdit: true,
+            editData: {
+                id: data.id,
+                username: data.username,
+                password: data.password,
+                roleId: data.roleId
+            }
         })
     }
 
-    renderRedirect = () => {
-        if (this.state.isRedirect) {
-            return <Redirect to={{
-                pathname: `/configs/${this.state.editCode}`,
-                state: {
-                    data: this.state.editData
-                }
-            }} />;
-        }
+    changeRole = async (event) => {
+        await this.updateData(event.target.value);
+    }
+
+    updateData = async (roleId) => {
+        let data = this.state.editData;
+        data.roleId = Number(roleId);
+        await UserService.updateAsync(data) && this.getData();
     }
 
     renderData() {
@@ -64,13 +76,23 @@ default export class UsersTable extends Component {
             row.index = row_index;
 
             return (
-                <tr key={row_index} className="text-center" onClick={async () => await self.setRedirect(row['code'])}>
+                <tr key={row_index} className="text-center" onClick={async () => await self.setEdit(row)}>
                     {
                         columns.map((column, index) => (
                             <td key={column + index} className={'table-' + column + '-td'}>
-                                {column === 'Value' ?
-                                    TypesValidation.prepareForDisplay(row['type'], row[column.toLowerCase()]) :
-                                    column === 'Type' ? Object.keys(TypesValidation.types)[row[column.toLowerCase()]] : row[column.toLowerCase()]}
+                                {(column.toLowerCase() === 'role') ? 
+                                    ((self.state.isEdit && self.state.editData.id === row['id']) ?
+                                        <select className="btn" onChange={async (e) => await self.changeRole(e)} defaultValue={row['roleId']}>
+                                            {self.state.roles.map(role =>
+                                                <option key={role.role} value={role.id}>{role.role}</option>
+                                            )}
+                                        </select> :
+                                        self.state.roles.map(role =>
+                                            role.id === row['roleId'] && 
+                                            <span key={column + index}>{role.role}</span>
+                                        )) : 
+                                    <span>{row[column.toLowerCase()]}</span>
+                                }
                             </td>
                         ))
                     }
@@ -82,7 +104,6 @@ default export class UsersTable extends Component {
     render() {
         return (
             <div className="card-body">
-                {this.renderRedirect()}
                 <div className="table-responsive" style={{ maxHeight: 'unset' }}>
                     <table className="table table-hover table-bordered">
                         <thead>
@@ -92,7 +113,7 @@ default export class UsersTable extends Component {
                         </thead>
                         <tbody>
                             {
-                                this.state.data.length > 0 ?
+                                this.state.data !== undefined && this.state.data.length > 0 ?
                                     this.renderData() : (
                                         this.state.isLoading ? 
                                             <tr className="text-center">
