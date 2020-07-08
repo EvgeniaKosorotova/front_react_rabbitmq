@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from "react-router-dom";
-import './style.css';
-import data from './Data';
+import '../css/style.css';
+import UserService from '../services/UserService';
 
 export class Register extends Component {
   constructor(props) {
@@ -12,9 +12,6 @@ export class Register extends Component {
       password: '',
       repeatPassword: '',
       formErrors: {username: '', password: '', repeatPassword: ''},
-      usernameValid: true,
-      passwordValid: true,
-      repeatPasswordValid: true,
       isRedirect: false
     };
   }
@@ -31,46 +28,36 @@ export class Register extends Component {
       password: '',
       repeatPassword: '',
       formErrors: {username: '', password: '', repeatPassword: ''},
-      usernameValid: true,
-      passwordValid: true,
-      repeatPasswordValid: true,
       isRedirect: false
     });
   }
   
   validateField(fieldName, value) {
     let fieldValidationErrors = this.state.formErrors;
-    let usernameValid = this.state.usernameValid;
-    let passwordValid = this.state.passwordValid;
-    let repeatPasswordValid = this.state.repeatPasswordValid;
 
     switch (fieldName) {
       case 'username':
-        usernameValid = value.replace(/\s+/g, '').length > 0;
+        let usernameValid = value.replace(/\s+/g, '').length > 0;
         fieldValidationErrors.username = usernameValid ? '' : `Field ${fieldName} is invalid`;
         break;
       case 'password':
-        passwordValid = value.length >= 6;
+        let passwordValid = value.length >= 6;
         fieldValidationErrors.password = passwordValid ? '': `Field ${fieldName} is too short`;
         break;
       case 'repeatpassword':
-        repeatPasswordValid = value === this.state.password;
+        let repeatPasswordValid = value === this.state.password;
         fieldValidationErrors.repeatPassword = repeatPasswordValid ? '': `Values do not match`;
         break;
       default:
         break;
     }
 
-    this.setState({formErrors: fieldValidationErrors,
-      usernameValid: usernameValid,
-      passwordValid: passwordValid,
-      repeatPasswordValid: repeatPasswordValid
-    });
+    this.setState({formErrors: fieldValidationErrors});
   }
 
   async handleSubmit(event) {
     event.preventDefault();
-    let isRedirect = await data.registerAsync(this.state.username, this.state.password);
+    let isRedirect = await UserService.registerAsync(this.state.username, this.state.password);
 
     if (isRedirect) {
       this.setRedirect(isRedirect);
@@ -102,10 +89,10 @@ export class Register extends Component {
               <Form.Label className="col-sm-2 col-form-label">Username</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="text" placeholder="Username" required 
-                name="username"
-                value={this.state.username}
-                onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.usernameValid && this.state.formErrors.username}</span>
+                  name="username"
+                  value={this.state.username}
+                  onChange={this.handleInput.bind(this)}/>
+                <span className='error'>{this.state.formErrors.username !== '' && this.state.formErrors.username}</span>
               </div>
             </Form.Group>
 
@@ -113,10 +100,10 @@ export class Register extends Component {
               <Form.Label className="col-sm-2 col-form-label">Password</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="password" placeholder="Password" required 
-                name="password"
-                value={this.state.password}
-                onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.passwordValid && this.state.formErrors.password}</span>
+                  name="password"
+                  value={this.state.password}
+                  onChange={this.handleInput.bind(this)}/>
+                <span className='error'>{this.state.formErrors.password !== '' && this.state.formErrors.password}</span>
               </div>
             </Form.Group>
 
@@ -124,10 +111,10 @@ export class Register extends Component {
               <Form.Label className="col-sm-2 col-form-label">Repeat password</Form.Label>
               <div className="col-sm-5">
                 <Form.Control type="password" placeholder="Repeat password" required 
-                name="repeatPassword"
-                value={this.state.repeatPassword}
-                onChange={this.handleInput.bind(this)}/>
-                <span className='error'>{!this.state.repeatPasswordValid && this.state.formErrors.repeatPassword}</span>
+                  name="repeatPassword"
+                  value={this.state.repeatPassword}
+                  onChange={this.handleInput.bind(this)}/>
+                <span className='error'>{this.state.formErrors.repeatPassword !== '' && this.state.formErrors.repeatPassword}</span>
               </div>
             </Form.Group>
 
